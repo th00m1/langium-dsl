@@ -1,0 +1,15 @@
+{
+    "projectName": "TodoList",
+    "languages": [{
+        "id": "todo-list",
+        "grammar": "src/language/todo-list.langium",
+        "fileExtensions": [".todo"],
+        "textMate": {
+            "out": "syntaxes/todo-list.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "syntaxes/todo-list.monarch.ts"
+        }
+    }],
+    "out": "src/language/generated"
+}
