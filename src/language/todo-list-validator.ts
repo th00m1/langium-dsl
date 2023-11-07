@@ -16,15 +16,4 @@ export function registerValidationChecks(services: TodoListServices) {
 /**
  * Implementation of custom validations.
  */
-export class TodoListValidator {
-
-    // checkPersonStartsWithCapital(person: Person, accept: ValidationAcceptor): void {
-    //     if (person.name) {
-    //         const firstChar = person.name.substring(0, 1);
-    //         if (firstChar.toUpperCase() !== firstChar) {
-    //             accept('warning', 'Person name should start with a capital.', { node: person, property: 'name' });
-    //         }
-    //     }
-    // }
-
-}
+export class TodoListValidator { }

@@ -4,18 +4,21 @@ entry Model:
     (stmts+=Stmt)*;
 
 Stmt: 
-    Add | Complete | 'list';
-
+    Add | Complete | Update;
 
 Add:
-    'add' content=STRING;
+    'add' name=WORD content=STRING;
 
 Complete:
-    'complete' todoId=INT;
+    'complete' todoName=WORD;
+
+Update:
+    'update' todoName=WORD newContent=STRING;
+
+
+terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
+terminal WORD: /\b[\w'-]+\b/;
 
 hidden terminal WS: /\s+/;
-terminal INT returns number: /[0-9]+/;
-terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
-
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;

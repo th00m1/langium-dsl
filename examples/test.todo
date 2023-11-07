@@ -1,8 +1,10 @@
-add 'test'
-/*
-* list with test
-*/
-list
-complete 1
-// updated list
-list
+// add some todos
+add Menage 'faire du rangement dans la maison'
+add Sport 'faire une course de 10km mercredi'
+add Ecole 'finir le TP2 de RX'
+
+// update some todos
+update Menage 'faire du rangement dans la cuisine'
+
+// complete some todos
+complete Menage

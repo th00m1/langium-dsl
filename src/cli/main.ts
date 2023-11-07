@@ -4,14 +4,14 @@ import { Command } from 'commander';
 import { TodoListLanguageMetaData } from '../language/generated/module.js';
 import { createTodoListServices } from '../language/todo-list-module.js';
 import { extractAstNode } from './cli-util.js';
-import { generateJavaScript } from './generator.js';
+import { generateFile } from './generator.js';
 import { NodeFileSystem } from 'langium/node';
 
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
     const services = createTodoListServices(NodeFileSystem).TodoList;
     const model = await extractAstNode<Model>(fileName, services);
-    const generatedFilePath = generateJavaScript(model, fileName, opts.destination);
-    console.log(chalk.green(`JavaScript code generated successfully: ${generatedFilePath}`));
+    const generatedFilePath = generateFile(model, fileName, opts.destination);
+    console.log(chalk.green(`File generated successfully: ${generatedFilePath}`));
 };
 
 export type GenerateOptions = {
