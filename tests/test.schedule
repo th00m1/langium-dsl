@@ -1,0 +1,3 @@
+task(A,duration=5)
+task(B,duration=2)
+precedence(A, B)

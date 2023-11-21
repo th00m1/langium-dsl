@@ -1,0 +1,15 @@
+{
+    "projectName": "Scheduler",
+    "languages": [{
+        "id": "scheduler",
+        "grammar": "src/language/scheduler.langium",
+        "fileExtensions": [".schedule"],
+        "textMate": {
+            "out": "syntaxes/scheduler.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "syntaxes/scheduler.monarch.ts"
+        }
+    }],
+    "out": "src/language/generated"
+}
