@@ -23,7 +23,7 @@ export default function(): void {
 
     program
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        .version(require('../../package.json').version);
+        .version('0.0.1');
 
     const fileExtensions = SchedulerLanguageMetaData.fileExtensions.join(', ');
     program
