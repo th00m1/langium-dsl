@@ -1,6 +1,6 @@
 grammar Scheduler
 
-entry Model:
+entry Tasks:
     (tasks+=Task | precedences+=Precedence)*;
 
 Task:
