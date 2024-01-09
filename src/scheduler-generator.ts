@@ -1,40 +1,37 @@
-export class SchedulerGenerator {
-  tasksSortedByDependency: Task[] = [];
-  tasksNotVisited: Task[] = [];
-  currentTask: Task | undefined;
-  currentTime = 0;
-  tasks: Task[] = [];
+import { Tasks } from "./language/generated/ast.js";
 
-  constructor(tasks: Task[]) {
-    this.tasks = tasks;
-    this.tasksSortedByDependency = this.sortTasksByDependency(tasks);
-    this.tasksNotVisited = this.tasksSortedByDependency;
+export class SchedulerGenerator {
+  private tasksNotVisited: Task[] = [];
+  private _currentTask: Task | undefined;
+  private _currentTime = 0;
+  private tasks: Task[] = [];
+
+  constructor(model: Tasks) {
+    this.tasks = this.modelToTask(model);
+    this.tasksNotVisited = this.sortTasksByDependency(this.tasks);
+    console.log(this.modelToTask(model), this.tasksNotVisited);
+  }
+
+  get currentTask() {
+    return this._currentTask;
+  }
+
+  get currentTime() {
+    return this._currentTime;
   }
 
   solve(): string[] {
-    this.currentTask = this.tasksNotVisited[0];
+    this._currentTask = this.tasksNotVisited[0];
     const schedule: string[] = [];
-    // let currentTime = 0;
-
-    console.log("sorted task", this.tasksSortedByDependency);
 
     while (!this.isFinished()) {
       this.next();
       schedule.push(
-        `Task ${this.currentTask.id} starts at ${
-          this.currentTime - this.currentTask.duration
-        } and ends at ${this.currentTime}`
+        `Task ${this._currentTask.id} starts at ${
+          this._currentTime - this._currentTask.duration
+        } and ends at ${this._currentTime}`
       );
     }
-    // this.tasksSortedByDependency.forEach((task) => {
-    //   const startTime = Math.max(currentTime, this.getStartTimeForTask(task));
-    //   schedule.push(
-    //     `Task ${task.id} starts at ${startTime} and ends at ${
-    //       startTime + task.duration
-    //     }`
-    //   );
-    //   currentTime = startTime + task.duration;
-    // });
 
     return schedule;
   }
@@ -44,36 +41,17 @@ export class SchedulerGenerator {
     if (!current) throw new Error("Empty tasks");
 
     const startTime = Math.max(
-      this.currentTime,
+      this._currentTime,
       this.getStartTimeForTask(current)
     );
 
-    this.currentTime = startTime + current.duration;
-    this.currentTask = current;
+    this._currentTime = startTime + current.duration;
+    this._currentTask = current;
   }
 
   isFinished(): boolean {
     return this.tasksNotVisited.length === 0;
   }
-
-  //   private sortTasksByDependency(tasks: Task[]): Task[] {
-  //     const visited: Record<string, boolean> = {};
-  //     const result: Task[] = [];
-
-  //     const dfs = (task: Task) => {
-  //       if (task && !visited[task.id]) {
-  //         visited[task.id] = true;
-  //         if (task.precedence) {
-  //           dfs(task.precedence);
-  //         }
-  //         result.push(task);
-  //       }
-  //     };
-
-  //     tasks.forEach((task) => dfs(task));
-
-  //     return result;
-  //   }
 
   private sortTasksByDependency(tasks: Task[]): Task[] {
     const visited: Record<string, boolean> = {};
@@ -120,6 +98,31 @@ export class SchedulerGenerator {
     }
 
     return 0;
+  }
+
+  private modelToTask(model: Tasks): Task[] {
+    const tasks: Task[] = model.tasks.map((task) => ({
+      id: task.name,
+      duration: task.duration,
+      precedence: [],
+    }));
+
+    const tasksWithPrecedence = tasks.map((task) => {
+      const precedences = model.precedences
+        .filter((precedence) => precedence.task.ref?.name === task.id)
+        .map((pre) => pre.require.ref?.name);
+
+      const require = tasks
+        .filter((t) => precedences.includes(t.id))
+        .map((t) => t.id);
+
+      return {
+        ...task,
+        precedence: require,
+      };
+    });
+
+    return tasksWithPrecedence;
   }
 }
 

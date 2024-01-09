@@ -1,5 +1,5 @@
 import { Tasks } from "../language/generated/ast.js";
-import { SchedulerGenerator, Task } from "../scheduler-generator.js";
+import { SchedulerGenerator } from "../scheduler-generator.js";
 
 export class SchedulerState implements State {
   readonly tasks: Tasks;
@@ -7,13 +7,7 @@ export class SchedulerState implements State {
 
   constructor(tasks: Tasks) {
     this.tasks = tasks;
-    const tasksMapped: Task[] = tasks.tasks.map((task) => ({
-      id: task.name,
-      duration: task.duration,
-      precedence: [],
-    }));
-
-    this.scheduler = new SchedulerGenerator(tasksMapped);
+    this.scheduler = new SchedulerGenerator(tasks);
   }
 
   isFinished(): boolean {

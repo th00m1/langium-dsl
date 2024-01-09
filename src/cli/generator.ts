@@ -1,5 +1,5 @@
 import type { Tasks } from "../language/generated/ast.js";
-import { SchedulerGenerator, Task } from "../scheduler-generator.js";
+import { SchedulerGenerator } from "../scheduler-generator.js";
 // import * as fs from 'node:fs';
 // import { CompositeGeneratorNode, NL, toString } from 'langium';
 // import * as path from 'node:path';
@@ -30,37 +30,8 @@ export function generateSchedule(
   filePath: string,
   destination: string | undefined
 ): string {
-  const tasks: Task[] = model.tasks.map((task) => ({
-    id: task.name,
-    duration: task.duration,
-    precedence: [],
-  }));
-  console.log("model", model.precedences);
-
-  const tasksWithPrecedence = tasks.map((task) => {
-    const precedences = model.precedences
-      .filter((precedence) => precedence.task.ref?.name === task.id)
-      .map((pre) => pre.require.ref?.name);
-
-    const require = tasks
-      .filter((t) => precedences.includes(t.id))
-      .map((t) => t.id);
-
-    return {
-      ...task,
-      precedence: require,
-    };
-  });
-
-  console.log("task", tasksWithPrecedence);
-
-  tasksWithPrecedence.forEach((task) => {
-    console.log("name: " + task.id);
-    task.precedence?.forEach((p) => console.log(p));
-  });
-
-  const scheduler = new SchedulerGenerator(tasksWithPrecedence);
-  console.log("==========SOLVED=========");
+  const scheduler = new SchedulerGenerator(model);
+  console.log("==========SOLVED=========!!");
   console.log(scheduler.solve());
   return "";
 }
