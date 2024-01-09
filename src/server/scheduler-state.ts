@@ -11,7 +11,7 @@ export class SchedulerState implements State {
   }
 
   isFinished(): boolean {
-    throw new Error("Method not implemented.");
+    return this.scheduler.isFinished();
   }
 
   next(): void {

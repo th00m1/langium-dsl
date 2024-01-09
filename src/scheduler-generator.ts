@@ -9,7 +9,6 @@ export class SchedulerGenerator {
   constructor(model: Tasks) {
     this.tasks = this.modelToTask(model);
     this.tasksNotVisited = this.sortTasksByDependency(this.tasks);
-    console.log(this.modelToTask(model), this.tasksNotVisited);
   }
 
   get currentTask() {
