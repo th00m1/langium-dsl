@@ -2,13 +2,14 @@ import { Tasks } from "./language/generated/ast.js";
 
 export class SchedulerGenerator {
   private tasksNotVisited: Task[] = [];
-  private _currentTask: Task | undefined;
+  private _currentTask: Task;
   private _currentTime = 0;
   private tasks: Task[] = [];
 
   constructor(model: Tasks) {
     this.tasks = this.modelToTask(model);
     this.tasksNotVisited = this.sortTasksByDependency(this.tasks);
+    this._currentTask = this.tasksNotVisited[0];
   }
 
   get currentTask() {
@@ -20,7 +21,6 @@ export class SchedulerGenerator {
   }
 
   solve(): string[] {
-    this._currentTask = this.tasksNotVisited[0];
     const schedule: string[] = [];
 
     while (!this.isFinished()) {

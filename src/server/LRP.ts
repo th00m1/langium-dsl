@@ -17,29 +17,41 @@ import {
 } from "./LRPService.js";
 import { SchedulerState } from "./scheduler-state.js";
 import { extractAstNode } from "../cli/cli-util.js";
+import { ModelElementBuilder } from "./modelElementBuilder.js";
+import { IDRegistry } from "./idRegistry.js";
 
 export class LRP implements LRPServices {
   static tasks: Map<string, Tasks> = new Map();
   static schedulerState: Map<string, SchedulerState> = new Map();
-  static registries: Map<string, string> = new Map();
+  static registries: Map<string, IDRegistry> = new Map();
 
   async parse(args: ParseArguments): Promise<ParseResponse> {
     LRP.schedulerState.delete(args.sourceFile);
+
+    const registry = new IDRegistry();
+    LRP.registries.set(args.sourceFile, registry);
+
     const services = createSchedulerServices(NodeFileSystem).Scheduler;
     const tasks = await extractAstNode<Tasks>(args.sourceFile, services);
 
     LRP.tasks.set(args.sourceFile, tasks);
-    // const builder = new ModelElementBuilder() @todo
-    throw new Error("Method not implemented.");
+    const builder = new ModelElementBuilder(registry);
+
+    return {
+      astRoot: builder.fromTasksModel(tasks),
+    };
   }
 
   initExecution(args: InitArguments): InitResponse {
     const tasks = LRP.tasks.get(args.sourceFile);
-    if (!tasks) {
-      throw new Error("The tasks of this file are undefined.");
-    }
+    if (!tasks) throw new Error("The tasks of this file are undefined.");
 
-    throw new Error("Method not implemented.");
+    const schedulerState = new SchedulerState(tasks);
+    LRP.schedulerState.set(args.sourceFile, schedulerState);
+
+    return {
+      isExecutionDone: schedulerState.isFinished(),
+    };
   }
 
   getRuntimeState(args: GetRuntimeStateArguments): GetRuntimeStateResponse {
@@ -47,7 +59,14 @@ export class LRP implements LRPServices {
     if (!schedulerState)
       throw new Error("The runtime state of this file is undefined.");
 
-    throw new Error("Method not implemented.");
+    const registry = LRP.registries.get(args.sourceFile);
+    if (!registry) throw new Error("The registry is undefined.");
+
+    const builder = new ModelElementBuilder(registry);
+
+    return {
+      runtimeStateRoot: builder.fromSchedulerState(schedulerState),
+    };
   }
 
   nextStep(args: StepArguments): StepResponse {

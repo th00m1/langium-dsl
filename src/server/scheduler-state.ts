@@ -15,7 +15,7 @@ export class SchedulerState implements State {
   }
 
   next(): void {
-    throw new Error("Method not implemented.");
+    this.scheduler.next();
   }
 }
 
