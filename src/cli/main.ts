@@ -6,6 +6,7 @@ import { createSchedulerServices } from "../language/scheduler-module.js";
 import { extractAstNode } from "./cli-util.js";
 import { generateJavaScript, generateSchedule } from "./generator.js";
 import { NodeFileSystem } from "langium/node";
+import { LRPServer } from "../server/LRPServer.js";
 
 export const generateAction = async (
   fileName: string,
@@ -59,12 +60,19 @@ export default function (): void {
 
   program
     .command("run")
-    .argument(
-      "<file>",
-      `source file (possible file extensions: ${fileExtensions})`
-    )
-    .option("-d, --destination <dir>", "destination directory of generating")
-    .action(generate);
+    .description("Run a server at a specific port")
+    .argument("<number>", "port")
+    .action(async (port: number) => {
+      const server = new LRPServer();
+      server.start(port);
+
+      //wait for server to start
+      await new Promise<void>((resolve) =>
+        setTimeout(() => {
+          resolve();
+        }, 2000)
+      );
+    });
 
   program.parse(process.argv);
 }

@@ -9,7 +9,6 @@ import {
   GetRuntimeStateResponse,
   InitArguments,
   InitResponse,
-  LRPServices,
   ParseArguments,
   ParseResponse,
   StepArguments,
@@ -20,12 +19,12 @@ import { extractAstNode } from "../cli/cli-util.js";
 import { ModelElementBuilder } from "./modelElementBuilder.js";
 import { IDRegistry } from "./idRegistry.js";
 
-export class LRP implements LRPServices {
+export class LRP {
   static tasks: Map<string, Tasks> = new Map();
   static schedulerState: Map<string, SchedulerState> = new Map();
   static registries: Map<string, IDRegistry> = new Map();
 
-  async parse(args: ParseArguments): Promise<ParseResponse> {
+  static async parse(args: ParseArguments): Promise<ParseResponse> {
     LRP.schedulerState.delete(args.sourceFile);
 
     const registry = new IDRegistry();
@@ -42,7 +41,7 @@ export class LRP implements LRPServices {
     };
   }
 
-  initExecution(args: InitArguments): InitResponse {
+  static initExecution(args: InitArguments): InitResponse {
     const tasks = LRP.tasks.get(args.sourceFile);
     if (!tasks) throw new Error("The tasks of this file are undefined.");
 
@@ -54,7 +53,9 @@ export class LRP implements LRPServices {
     };
   }
 
-  getRuntimeState(args: GetRuntimeStateArguments): GetRuntimeStateResponse {
+  static getRuntimeState(
+    args: GetRuntimeStateArguments
+  ): GetRuntimeStateResponse {
     const schedulerState = LRP.schedulerState.get(args.sourceFile);
     if (!schedulerState)
       throw new Error("The runtime state of this file is undefined.");
@@ -69,7 +70,7 @@ export class LRP implements LRPServices {
     };
   }
 
-  nextStep(args: StepArguments): StepResponse {
+  static nextStep(args: StepArguments): StepResponse {
     const schedulerState = LRP.schedulerState.get(args.sourceFile);
     if (!schedulerState)
       throw new Error("The runtime state of this file is undefined.");
@@ -81,11 +82,13 @@ export class LRP implements LRPServices {
     };
   }
 
-  getBreakpointTypes(): GetBreakpointTypesResponse {
+  static getBreakpointTypes(): GetBreakpointTypesResponse {
     return { breakpointTypes: [] };
   }
 
-  checkBreakpoint(args: CheckBreakpointArguments): CheckBreakpointResponse {
+  static checkBreakpoint(
+    args: CheckBreakpointArguments
+  ): CheckBreakpointResponse {
     throw new Error("Method not implemented.");
   }
 }

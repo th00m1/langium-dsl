@@ -3,193 +3,193 @@
  * to interface with a debugger through LRP.
  */
 export interface LRPServices {
-    /**
-     * Parses a file and stores the generated AST.
-     * 
-     * @param args 
-     */
-    parse(args: ParseArguments): Promise<ParseResponse>;
+  /**
+   * Parses a file and stores the generated AST.
+   *
+   * @param args
+   */
+  parse(args: ParseArguments): Promise<ParseResponse>;
 
-    /**
-     * Creates a new runtime state for a given source file and stores it.
-     * The AST for the given source file must have been previously constructed through the `parse` service.
-     * 
-     * @param args 
-     */
-    initExecution(args: InitArguments): InitResponse;
+  /**
+   * Creates a new runtime state for a given source file and stores it.
+   * The AST for the given source file must have been previously constructed through the `parse` service.
+   *
+   * @param args
+   */
+  initExecution(args: InitArguments): InitResponse;
 
-    /**
-     * Returns the current runtime state for a given source file.
-     * 
-     * @param args 
-     */
-    getRuntimeState(args: GetRuntimeStateArguments): GetRuntimeStateResponse;
+  /**
+   * Returns the current runtime state for a given source file.
+   *
+   * @param args
+   */
+  getRuntimeState(args: GetRuntimeStateArguments): GetRuntimeStateResponse;
 
-    /**
-     * Performs the next execution step in the runtime state associated to a given source file.
-     * 
-     * @param args 
-     */
-    nextStep(args: StepArguments): StepResponse;
+  /**
+   * Performs the next execution step in the runtime state associated to a given source file.
+   *
+   * @param args
+   */
+  nextStep(args: StepArguments): StepResponse;
 
-    /**
-     * Returns the available breakpoint types defined by the language runtime.
-     */
-    getBreakpointTypes(): GetBreakpointTypesResponse;
+  /**
+   * Returns the available breakpoint types defined by the language runtime.
+   */
+  getBreakpointTypes(): GetBreakpointTypesResponse;
 
-    /**
-     * Checks whether a breakpoint of a certain type is verified with the given arguments.
-     * 
-     * @param args 
-     */
-    checkBreakpoint(args: CheckBreakpointArguments): CheckBreakpointResponse;
+  /**
+   * Checks whether a breakpoint of a certain type is verified with the given arguments.
+   *
+   * @param args
+   */
+  checkBreakpoint(args: CheckBreakpointArguments): CheckBreakpointResponse;
 }
 
 interface Arguments {
-    /** Source file targeted by the service call. */
-    sourceFile: string;
+  /** Source file targeted by the service call. */
+  sourceFile: string;
 }
 
-export interface ParseArguments extends Arguments { }
+export interface ParseArguments extends Arguments {}
 
 export interface ParseResponse {
-    /** Root of the AST. */
-    astRoot: ModelElement;
+  /** Root of the AST. */
+  astRoot: ModelElement;
 }
 
 export interface InitArguments extends Arguments {
-    /** Arbitrary argument necessary for the initialization of a runtime state. */
-    [additionalArg: string]: unknown;
+  /** Arbitrary argument necessary for the initialization of a runtime state. */
+  [additionalArg: string]: unknown;
 }
 
 export interface InitResponse {
-    /** True if the execution is done, false otherwise. */
-    isExecutionDone: boolean;
+  /** True if the execution is done, false otherwise. */
+  isExecutionDone: boolean;
 }
 
 export interface GetBreakpointTypesResponse {
-    /** Breakpoint types defined by the language runtime. */
-    breakpointTypes: BreakpointType[];
+  /** Breakpoint types defined by the language runtime. */
+  breakpointTypes: BreakpointType[];
 }
 
-export interface StepArguments extends Arguments { }
+export interface StepArguments extends Arguments {}
 
 export interface StepResponse {
-    /** True if the execution is done, false otherwise. */
-    isExecutionDone: boolean;
+  /** True if the execution is done, false otherwise. */
+  isExecutionDone: boolean;
 }
 
-export interface GetRuntimeStateArguments extends Arguments { }
+export interface GetRuntimeStateArguments extends Arguments {}
 
 export interface GetRuntimeStateResponse {
-    /** Root of the runtime state. */
-    runtimeStateRoot: ModelElement;
+  /** Root of the runtime state. */
+  runtimeStateRoot: ModelElement;
 }
 
 export interface CheckBreakpointArguments extends Arguments {
-    /** Identifier of the breakpoint type. */
-    typeId: string;
+  /** Identifier of the breakpoint type. */
+  typeId: string;
 
-    /** Identifier of the model element. */
-    elementId: string;
+  /** Identifier of the model element. */
+  elementId: string;
 }
 
 export interface CheckBreakpointResponse {
-    /** True if the breakpoint is activated, false otherwise. */
-    isActivated: boolean;
+  /** True if the breakpoint is activated, false otherwise. */
+  isActivated: boolean;
 
-    /** 
-     * Human-readable message to describe the cause of activation.
-     * Should only be set if `isActivated` is true.
-     */
-    message?: string;
+  /**
+   * Human-readable message to describe the cause of activation.
+   * Should only be set if `isActivated` is true.
+   */
+  message?: string;
 }
 
 /**
  * Element of the AST or runtime state.
  */
 export interface ModelElement {
-    /** Unique identifier of the element. */
-    id: string;
+  /** Unique identifier of the element. */
+  id: string;
 
-    /** Type of the element. */
-    type: string;
+  /** Type of the element. */
+  type: string;
 
-    /** Containment relations with other elements. */
-    children: { [key: string]: ModelElement | ModelElement[]; };
+  /** Containment relations with other elements. */
+  children: { [key: string]: ModelElement | ModelElement[] };
 
-    /** References to other elements. */
-    refs: { [key: string]: string | string[]; };
+  /** References to other elements. */
+  refs: { [key: string]: string | string[] };
 
-    /** Attributes with primitive values. */
-    attributes: { [key: string]: any; };
+  /** Attributes with primitive values. */
+  attributes: { [key: string]: any };
 
-    /** Location of the element in its original source file. */
-    location?: Location;
+  /** Location of the element in its original source file. */
+  location?: Location;
 }
 
 /**
  * Location in a textual source file.
  */
 export interface Location {
-    /** Starting line. */
-    line: number;
+  /** Starting line. */
+  line: number;
 
-    /** Starting column. */
-    column: number;
+  /** Starting column. */
+  column: number;
 
-    /** End line. */
-    endLine: number;
+  /** End line. */
+  endLine: number;
 
-    /** End column. */
-    endColumn: number;
+  /** End column. */
+  endColumn: number;
 }
 
 /**
  * Breakpoint type defined by the language runtime.
  */
 export interface BreakpointType {
-    /** Unique identifier of the breakpoint type. */
-    id: string;
+  /** Unique identifier of the breakpoint type. */
+  id: string;
 
-    /** Human-readable name of the breakpoint type. */
-    name: string;
+  /** Human-readable name of the breakpoint type. */
+  name: string;
 
-    /** Human-readable description of the breakpoint type. */
-    description: string;
+  /** Human-readable description of the breakpoint type. */
+  description: string;
 
-    /** Parameters needed to evaluate a breakpoint of this type. */
-    parameters: BreakpointParameter[];
+  /** Parameters needed to evaluate a breakpoint of this type. */
+  parameters: BreakpointParameter[];
 }
 
 /**
  * Parameter required by a breakpoint type.
  */
 export interface BreakpointParameter {
-    /** Name of the parameter. */
-    name: string;
+  /** Name of the parameter. */
+  name: string;
 
-    /** True is the parameter is a collection, false otherwise. */
-    isMultivalued: boolean;
+  /** True is the parameter is a collection, false otherwise. */
+  isMultivalued: boolean;
 
-    /**
-     * Primitive type of the parameter.
-     * Exactly one of `primitiveType` and `objectType` must be set.
-     */
-    primitiveType?: PrimitiveType;
+  /**
+   * Primitive type of the parameter.
+   * Exactly one of `primitiveType` and `objectType` must be set.
+   */
+  primitiveType?: PrimitiveType;
 
-    /**
-     * Object type of the parameter, as defined in {@link ModelElement.type}.
-     * Exactly one of `primitiveType` and `objectType` must be set.
-     */
-    objectType?: string;
+  /**
+   * Object type of the parameter, as defined in {@link ModelElement.type}.
+   * Exactly one of `primitiveType` and `objectType` must be set.
+   */
+  objectType?: string;
 }
 
 /**
  * Primitive type of a value.
  */
 export enum PrimitiveType {
-    BOOLEAN = 'boolean',
-    STRING = 'string',
-    NUMBER = 'number'
+  BOOLEAN = "boolean",
+  STRING = "string",
+  NUMBER = "number",
 }
